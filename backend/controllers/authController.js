@@ -1,7 +1,6 @@
-
-import User from "../model/usermodels.js";
 import bcrypt from 'bcryptjs';
-import jwt from "jsonwebtoken";
+import User from '../model/usermodels.js';
+import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -15,6 +14,7 @@ export const register = async (req, res) => {
     try {
         let user = await User.findOne({ email });
         if (user) {
+            console.log("User already exists");
             return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
         }
 
@@ -24,7 +24,7 @@ export const register = async (req, res) => {
             return res.status(400).json({ errors: [{ msg: 'Password is required' }] });
         }
 
-        // Hash the password before saving
+        // Hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -60,8 +60,6 @@ export const register = async (req, res) => {
     }
 };
 
-
-
 export const login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -72,7 +70,7 @@ export const login = async (req, res) => {
         let user = await User.findOne({ email });
         if (!user) {
             console.error("User not found");
-            return res.status(400).json({ msg: 'Invalid credentials' });
+            return res.status(400).json({ msg: 'User Not Found' });
         }
 
         console.log("User found:", user); // Log the user details
@@ -80,7 +78,7 @@ export const login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             console.error("Password does not match");
-            return res.status(400).json({ msg: 'Invalid credentials' });
+            return res.status(400).json({ msg: 'Password does not match' });
         }
 
         const payload = {
@@ -104,6 +102,3 @@ export const login = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
-
-
-

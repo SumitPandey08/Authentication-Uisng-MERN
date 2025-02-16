@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
     try {
-        const mongoURI = 'mongodb+srv://dbpass8871:dbpass8871@authserve.f13yu.mongodb.net/?retryWrites=true&w=majority&appName=AuthServe';
+        const mongoURI = process.env.MONGODB_URI;
         if (!mongoURI) {
             throw new Error("MONGODB_URL is not defined in the environment variables");
         }
